@@ -35,7 +35,7 @@ builder.Services.AddOpenApi(options =>
             };
 
         foreach (var operation in document.Paths.Values
-                     .SelectMany(path => path.Operations))
+                     .SelectMany(path => path.Operations ?? []))
         {
             operation.Value.Security ??= [];
 
@@ -46,6 +46,19 @@ builder.Services.AddOpenApi(options =>
                         "Bearer",
                         document)] = []
                 });
+        }
+
+        return Task.CompletedTask;
+    });
+
+    options.AddSchemaTransformer((schema, context, cancellationToken) =>
+    {
+        var type = Nullable.GetUnderlyingType(context.JsonTypeInfo.Type)
+            ?? context.JsonTypeInfo.Type;
+
+        if (type == typeof(int) || type == typeof(long))
+        {
+            schema.Type = JsonSchemaType.Integer;
         }
 
         return Task.CompletedTask;
