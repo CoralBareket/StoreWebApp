@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StoreWebApi.Data;
 using StoreWebApi.Dtos.Auth;
 using StoreWebApi.Models;
+using StoreWebApi.Services;
 
 namespace StoreWebApi.Controllers;
 
@@ -13,13 +14,16 @@ public class AuthController : ControllerBase
 {
     private readonly AppDbContext _context;
     private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly ITokenService _tokenService;
 
     public AuthController(
         AppDbContext context,
-        IPasswordHasher<User> passwordHasher)
+        IPasswordHasher<User> passwordHasher,
+        ITokenService tokenService)
     {
         _context = context;
         _passwordHasher = passwordHasher;
+        _tokenService = tokenService;
     }
 
     [HttpPost("register")]
