@@ -54,4 +54,40 @@ public class AuthController : ControllerBase
 
         return StatusCode(StatusCodes.Status201Created);
     }
+
+    [HttpPost("login")]
+    public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
+    {
+        var userName = request.UserName.Trim();
+
+        var user = await _context.Users
+            .FirstOrDefaultAsync(user => user.UserName == userName);
+
+        if (user is null)
+        {
+            return Unauthorized("Invalid username or password.");
+        }
+
+        var passwordVerificationResult =
+            _passwordHasher.VerifyHashedPassword(
+                user,
+                user.PasswordHash,
+                request.Password);
+
+        if (passwordVerificationResult == PasswordVerificationResult.Failed)
+        {
+            return Unauthorized("Invalid username or password.");
+        }
+
+        user.LastLogin = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        var accessToken = _tokenService.CreateAccessToken(user);
+
+        return Ok(new LoginResponse
+        {
+            AccessToken = accessToken
+        });
+    }
 }
