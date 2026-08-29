@@ -1,4 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using StoreWebApi.Models;
+
+namespace StoreWebApi.Data;
 
 public class AppDbContext : DbContext
 {
