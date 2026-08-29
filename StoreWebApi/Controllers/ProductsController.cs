@@ -47,4 +47,31 @@ public class ProductsController : ControllerBase
 
         return Ok(products);
     }
+
+    [HttpPost]
+    public async Task<ActionResult<ProductResponse>> CreateProduct(
+    ProductRequest request)
+    {
+        var product = new Product
+        {
+            Name = request.Name.Trim(),
+            Category = request.Category.Trim(),
+            Price = request.Price,
+            UnitsInStock = request.UnitsInStock
+        };
+
+        _context.Products.Add(product);
+        await _context.SaveChangesAsync();
+
+        var response = new ProductResponse
+        {
+            Id = product.Id,
+            Name = product.Name,
+            Category = product.Category,
+            Price = product.Price,
+            UnitsInStock = product.UnitsInStock
+        };
+
+        return StatusCode(StatusCodes.Status201Created, response);
+    }
 }
