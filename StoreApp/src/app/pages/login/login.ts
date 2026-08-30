@@ -33,7 +33,7 @@ export class Login {
     this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: () => {
         this.isSubmitting.set(false);
-        console.log('Login successful');
+        this.router.navigate(['/products']);
       },
       error: () => {
         this.isSubmitting.set(false);
