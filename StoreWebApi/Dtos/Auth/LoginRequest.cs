@@ -5,8 +5,8 @@ namespace StoreWebApi.Dtos.Auth;
 public class LoginRequest
 {
     [Required]
-    public string UserName { get; set; } = string.Empty;
+    public required string UserName { get; set; }
 
     [Required]
-    public string Password { get; set; } = string.Empty;
+    public required string Password { get; set; }
 }
