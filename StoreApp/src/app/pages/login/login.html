@@ -33,10 +33,10 @@
 
       <button
         type="submit"
-        [disabled]="loginForm.invalid || isSubmitting"
+        [disabled]="loginForm.invalid || isSubmitting()"
         class="w-full rounded border p-2"
       >
-        {{ isSubmitting ? 'Logging in...' : 'Login' }}
+        {{ isSubmitting() ? 'Logging in...' : 'Login' }}
       </button>
     </form>
   </div>

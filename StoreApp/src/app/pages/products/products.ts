@@ -1,7 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { ProductsService } from '../../services/products';
+import { ProductsService } from '../../services/products.service';
 import { ProductResponse } from '../../models/product.models';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -12,14 +14,16 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 export class Products implements OnInit {
   private readonly formBuilder = inject(FormBuilder);
   private readonly productsService = inject(ProductsService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
-  products = signal<ProductResponse[]>([]);
-  errorMessage = signal('');
-  isLoading = signal(false);
-  isSubmitting = signal(false);
-  editingProductId = signal<number | null>(null);
+  protected readonly products = signal<ProductResponse[]>([]);
+  protected readonly errorMessage = signal('');
+  protected readonly isLoading = signal(false);
+  protected readonly isSubmitting = signal(false);
+  protected readonly editingProductId = signal<number | null>(null);
 
-  productForm = this.formBuilder.nonNullable.group({
+  protected readonly productForm = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
     category: ['', Validators.required],
     price: [0, [Validators.min(0)]],
@@ -113,5 +117,10 @@ export class Products implements OnInit {
 
   onCancelEdit(): void {
     this.resetProductForm();
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
