@@ -121,7 +121,10 @@ else
     app.UseExceptionHandler();
 }
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
 
 app.UseCors(ClientCorsPolicy);
 
