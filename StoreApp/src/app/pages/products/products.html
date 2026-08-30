@@ -1,6 +1,52 @@
 <section class="p-8">
   <h1 class="mb-6 text-2xl font-bold">Products</h1>
 
+  <div class="mb-8">
+    <h2 class="mb-4 text-xl font-semibold">Add Product</h2>
+
+    <form [formGroup]="productForm" (ngSubmit)="onCreateProduct()" class="space-y-4">
+      <div>
+        <label for="name" class="block">Name</label>
+        <input id="name" type="text" formControlName="name" class="rounded border p-2" />
+      </div>
+
+      <div>
+        <label for="category" class="block">Category</label>
+        <input id="category" type="text" formControlName="category" class="rounded border p-2" />
+      </div>
+
+      <div>
+        <label for="price" class="block">Price</label>
+        <input
+          id="price"
+          type="number"
+          min="0"
+          formControlName="price"
+          class="rounded border p-2"
+        />
+      </div>
+
+      <div>
+        <label for="unitsInStock" class="block">Units in stock</label>
+        <input
+          id="unitsInStock"
+          type="number"
+          min="0"
+          formControlName="unitsInStock"
+          class="rounded border p-2"
+        />
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="productForm.invalid || isCreating()"
+        class="rounded border px-4 py-2"
+      >
+        {{ isCreating() ? 'Adding...' : 'Add Product' }}
+      </button>
+    </form>
+  </div>
+
   <div class="mb-6">
     <input
       #searchInput
@@ -26,7 +72,7 @@
     </button>
   </div>
 
-  @if (isLoading) {
+  @if (isLoading()) {
     <p>Loading products...</p>
   }
 
@@ -36,7 +82,7 @@
     </p>
   }
 
-  @if (!isLoading && products().length === 0) {
+  @if (!isLoading() && products().length === 0) {
     <p>No products found.</p>
   }
 
