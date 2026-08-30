@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth';
+import { Router } from '@angular/router';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -11,9 +12,10 @@ import { AuthService } from '../../services/auth';
 export class Login {
   private readonly formBuilder = inject(FormBuilder);
   private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
   errorMessage = signal('');
-  isSubmitting = false;
+  isSubmitting = signal(false);
 
   loginForm = this.formBuilder.nonNullable.group({
     userName: ['', Validators.required],
@@ -26,15 +28,15 @@ export class Login {
     }
 
     this.errorMessage.set('');
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
 
     this.authService.login(this.loginForm.getRawValue()).subscribe({
       next: () => {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
         console.log('Login successful');
       },
       error: () => {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
         this.errorMessage.set('Invalid username or password');
       },
     });
