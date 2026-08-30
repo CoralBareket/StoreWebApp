@@ -16,7 +16,7 @@ export class Products implements OnInit {
   products = signal<ProductResponse[]>([]);
   errorMessage = signal('');
   isLoading = signal(false);
-  isCreating = signal(false);
+  isSubmitting = signal(false);
   editingProductId = signal<number | null>(null);
 
   productForm = this.formBuilder.nonNullable.group({
@@ -26,12 +26,22 @@ export class Products implements OnInit {
     unitsInStock: [0, [Validators.min(0)]],
   });
 
-  // Load the initial product list when the component is initialized
+  private resetProductForm(): void {
+    this.productForm.reset({
+      name: '',
+      category: '',
+      price: 0,
+      unitsInStock: 0,
+    });
+
+    this.editingProductId.set(null);
+    this.isSubmitting.set(false);
+  }
+
   ngOnInit(): void {
     this.loadProducts();
   }
 
-  // Fetch products, optionally filtered by search text
   loadProducts(search?: string): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
@@ -48,37 +58,60 @@ export class Products implements OnInit {
     });
   }
 
-  // Reload the products list using the entered search value
   onSearch(search: string): void {
     this.loadProducts(search);
   }
 
-  // Create a new product using the current form values
-  onCreateProduct(): void {
+  onSubmitProduct(): void {
     if (this.productForm.invalid) {
       return;
     }
 
-    this.isCreating.set(true);
+    this.isSubmitting.set(true);
     this.errorMessage.set('');
 
-    this.productsService.createProduct(this.productForm.getRawValue()).subscribe({
-      next: () => {
-        // Clear the form after a successful creation
-        this.productForm.reset({
-          name: '',
-          category: '',
-          price: 0,
-          unitsInStock: 0,
-        });
+    const request = this.productForm.getRawValue();
+    const productId = this.editingProductId();
 
-        this.isCreating.set(false);
+    if (productId !== null) {
+      this.productsService.updateProduct(productId, request).subscribe({
+        next: () => {
+          this.resetProductForm();
+          this.loadProducts();
+        },
+        error: () => {
+          this.errorMessage.set('Failed to update product');
+          this.isSubmitting.set(false);
+        },
+      });
+
+      return;
+    }
+
+    this.productsService.createProduct(request).subscribe({
+      next: () => {
+        this.resetProductForm();
         this.loadProducts();
       },
       error: () => {
         this.errorMessage.set('Failed to create product');
-        this.isCreating.set(false);
+        this.isSubmitting.set(false);
       },
     });
+  }
+
+  onEditProduct(product: ProductResponse): void {
+    this.editingProductId.set(product.id);
+
+    this.productForm.setValue({
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      unitsInStock: product.unitsInStock,
+    });
+  }
+
+  onCancelEdit(): void {
+    this.resetProductForm();
   }
 }
