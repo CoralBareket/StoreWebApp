@@ -13,17 +13,19 @@ export class AuthService {
   private readonly tokenKey = 'accessToken';
 
   login(request: LoginRequest) {
-    return this.http
-      .post<LoginResponse>(`${this.apiUrl}/login`, request)
-      .pipe(
-        tap((response) => {
-          localStorage.setItem(this.tokenKey, response.accessToken);
-        }),
-      );
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, request).pipe(
+      tap((response) => {
+        localStorage.setItem(this.tokenKey, response.accessToken);
+      }),
+    );
   }
 
   getAccessToken(): string | null {
     return localStorage.getItem(this.tokenKey);
+  }
+
+  isAuthenticated(): boolean {
+    return this.getAccessToken() !== null;
   }
 
   logout(): void {
