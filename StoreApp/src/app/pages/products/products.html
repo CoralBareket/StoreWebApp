@@ -1,0 +1,66 @@
+<section class="p-8">
+  <h1 class="mb-6 text-2xl font-bold">Products</h1>
+
+  <div class="mb-6">
+    <input
+      #searchInput
+      type="text"
+      placeholder="Search by name or category"
+      class="rounded border p-2"
+    />
+
+    <button
+      type="button"
+      class="ml-2 rounded border px-4 py-2"
+      (click)="onSearch(searchInput.value)"
+    >
+      Search
+    </button>
+
+    <button
+      type="button"
+      class="ml-2 rounded border px-4 py-2"
+      (click)="searchInput.value = ''; onSearch('')"
+    >
+      Clear
+    </button>
+  </div>
+
+  @if (isLoading) {
+    <p>Loading products...</p>
+  }
+
+  @if (errorMessage()) {
+    <p class="text-red-600">
+      {{ errorMessage() }}
+    </p>
+  }
+
+  @if (!isLoading && products().length === 0) {
+    <p>No products found.</p>
+  }
+
+  @if (products().length > 0) {
+    <table class="w-full border-collapse border">
+      <thead>
+        <tr>
+          <th class="border p-2 text-left">Name</th>
+          <th class="border p-2 text-left">Category</th>
+          <th class="border p-2 text-left">Price</th>
+          <th class="border p-2 text-left">Units in stock</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (product of products(); track product.id) {
+          <tr>
+            <td class="border p-2">{{ product.name }}</td>
+            <td class="border p-2">{{ product.category }}</td>
+            <td class="border p-2">{{ product.price }}</td>
+            <td class="border p-2">{{ product.unitsInStock }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
