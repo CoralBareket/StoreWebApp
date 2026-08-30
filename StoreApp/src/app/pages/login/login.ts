@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
+import { finalize } from 'rxjs';
 
 @Component({
   imports: [ReactiveFormsModule],
@@ -14,15 +15,15 @@ export class Login {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  errorMessage = signal('');
-  isSubmitting = signal(false);
+  protected readonly errorMessage = signal('');
+  protected readonly isSubmitting = signal(false);
 
-  loginForm = this.formBuilder.nonNullable.group({
+  protected readonly loginForm = this.formBuilder.nonNullable.group({
     userName: ['', Validators.required],
     password: ['', Validators.required],
   });
 
-  onSubmit(): void {
+  protected onSubmit(): void {
     if (this.loginForm.invalid) {
       return;
     }
@@ -30,15 +31,20 @@ export class Login {
     this.errorMessage.set('');
     this.isSubmitting.set(true);
 
-    this.authService.login(this.loginForm.getRawValue()).subscribe({
-      next: () => {
-        this.isSubmitting.set(false);
-        this.router.navigate(['/products']);
-      },
-      error: () => {
-        this.isSubmitting.set(false);
-        this.errorMessage.set('Invalid username or password');
-      },
-    });
+    this.authService
+      .login(this.loginForm.getRawValue())
+      .pipe(
+        finalize(() => {
+          this.isSubmitting.set(false);
+        }),
+      )
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/products']);
+        },
+        error: () => {
+          this.errorMessage.set('Invalid username or password');
+        },
+      });
   }
 }
