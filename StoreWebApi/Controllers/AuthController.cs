@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -85,9 +86,11 @@ public class AuthController : ControllerBase
 
         var accessToken = _tokenService.CreateAccessToken(user);
 
-        return Ok(new LoginResponse
+        var response = new LoginResponse
         {
             AccessToken = accessToken
-        });
+        };
+
+        return Ok(response);
     }
 }
