@@ -46,7 +46,7 @@ export class Products implements OnInit {
     this.loadProducts();
   }
 
-  loadProducts(search?: string): void {
+  private loadProducts(search?: string): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
 
@@ -62,11 +62,11 @@ export class Products implements OnInit {
     });
   }
 
-  onSearch(search: string): void {
+  protected onSearch(search: string): void {
     this.loadProducts(search);
   }
 
-  onSubmitProduct(): void {
+  protected onSubmitProduct(): void {
     if (this.productForm.invalid) {
       return;
     }
@@ -104,7 +104,7 @@ export class Products implements OnInit {
     });
   }
 
-  onEditProduct(product: ProductResponse): void {
+  protected onEditProduct(product: ProductResponse): void {
     this.editingProductId.set(product.id);
 
     this.productForm.setValue({
@@ -115,11 +115,11 @@ export class Products implements OnInit {
     });
   }
 
-  onCancelEdit(): void {
+  protected onCancelEdit(): void {
     this.resetProductForm();
   }
 
-  onLogout(): void {
+  protected onLogout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }
