@@ -17,6 +17,7 @@ export class Products implements OnInit {
   errorMessage = signal('');
   isLoading = signal(false);
   isCreating = signal(false);
+  editingProductId = signal<number | null>(null);
 
   productForm = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
@@ -25,10 +26,12 @@ export class Products implements OnInit {
     unitsInStock: [0, [Validators.min(0)]],
   });
 
+  // Load the initial product list when the component is initialized
   ngOnInit(): void {
     this.loadProducts();
   }
 
+  // Fetch products, optionally filtered by search text
   loadProducts(search?: string): void {
     this.isLoading.set(true);
     this.errorMessage.set('');
@@ -45,10 +48,12 @@ export class Products implements OnInit {
     });
   }
 
+  // Reload the products list using the entered search value
   onSearch(search: string): void {
     this.loadProducts(search);
   }
 
+  // Create a new product using the current form values
   onCreateProduct(): void {
     if (this.productForm.invalid) {
       return;
@@ -59,6 +64,7 @@ export class Products implements OnInit {
 
     this.productsService.createProduct(this.productForm.getRawValue()).subscribe({
       next: () => {
+        // Clear the form after a successful creation
         this.productForm.reset({
           name: '',
           category: '',
@@ -66,12 +72,12 @@ export class Products implements OnInit {
           unitsInStock: 0,
         });
 
-        this.isCreating.set(true);
+        this.isCreating.set(false);
         this.loadProducts();
       },
       error: () => {
         this.errorMessage.set('Failed to create product');
-        this.isCreating.set(true);
+        this.isCreating.set(false);
       },
     });
   }
