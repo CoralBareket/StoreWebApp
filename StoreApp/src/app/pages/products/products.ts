@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ProductsService } from '../../services/products.service';
-import { ProductResponse } from '../../models/product.models';
+import { PRODUCT_CATEGORIES, ProductCategory, ProductResponse } from '../../models/product.models';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
@@ -22,10 +22,11 @@ export class Products implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly isSubmitting = signal(false);
   protected readonly editingProductId = signal<number | null>(null);
+  protected readonly productCategories = PRODUCT_CATEGORIES;
 
   protected readonly productForm = this.formBuilder.nonNullable.group({
     name: ['', Validators.required],
-    category: ['', Validators.required],
+    category: [ProductCategory.Sofa, Validators.required],
     price: [0, [Validators.min(0)]],
     unitsInStock: [0, [Validators.min(0)]],
   });
@@ -33,7 +34,7 @@ export class Products implements OnInit {
   private resetProductForm(): void {
     this.productForm.reset({
       name: '',
-      category: '',
+      category: ProductCategory.Sofa,
       price: 0,
       unitsInStock: 0,
     });

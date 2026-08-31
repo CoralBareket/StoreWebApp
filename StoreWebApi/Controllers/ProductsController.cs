@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StoreWebApi.Data;
 using StoreWebApi.Dtos.Products;
+using StoreWebApi.Enums;
 using StoreWebApi.Models;
 
 namespace StoreWebApi.Controllers;
@@ -29,9 +30,20 @@ public class ProductsController : ControllerBase
         {
             var searchTerm = search.Trim();
 
-            query = query.Where(product =>
-                product.Name.Contains(searchTerm) ||
-                product.Category.Contains(searchTerm));
+            if (Enum.TryParse<ProductCategory>(
+            searchTerm,
+            ignoreCase: true,
+            out var category))
+            {
+                query = query.Where(product =>
+                    product.Name.Contains(searchTerm) ||
+                    product.Category == category);
+            }
+            else
+            {
+                query = query.Where(product =>
+                    product.Name.Contains(searchTerm));
+            }
         }
 
         var products = await query
@@ -55,7 +67,7 @@ public class ProductsController : ControllerBase
         var product = new Product
         {
             Name = request.Name.Trim(),
-            Category = request.Category.Trim(),
+            Category = request.Category,
             Price = request.Price,
             UnitsInStock = request.UnitsInStock
         };
@@ -88,7 +100,7 @@ public class ProductsController : ControllerBase
         }
 
         product.Name = request.Name.Trim();
-        product.Category = request.Category.Trim();
+        product.Category = request.Category;
         product.Price = request.Price;
         product.UnitsInStock = request.UnitsInStock;
 

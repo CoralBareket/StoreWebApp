@@ -18,6 +18,10 @@ public class AppDbContext : DbContext
             .Property(product => product.Price)
             .HasPrecision(18, 2);
 
+        modelBuilder.Entity<Product>()
+            .Property(product => product.Category)
+            .HasConversion<string>();
+
         modelBuilder.Entity<User>()
             .HasIndex(user => user.UserName)
             .IsUnique();

@@ -48,4 +48,3 @@ VALUES (N'20260829152142_AddUniqueUserNameIndex', N'10.0.11');
 
 COMMIT;
 GO
-
