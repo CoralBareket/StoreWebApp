@@ -14,6 +14,7 @@ StoreWebApp/
 │       ├── database.sql       # Database creation script
 │       └── seed-data.sql      # Sample data
 └── README.md
+```
 
 ## Prerequisites
 
