@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { tap } from 'rxjs';
-import { LoginRequest, LoginResponse } from '../models/auth.models';
+import { LoginRequest, LoginResponse, RegisterRequest } from '../models/auth.models';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +18,10 @@ export class AuthService {
         localStorage.setItem(this.tokenKey, response.accessToken);
       }),
     );
+  }
+
+  register(request: RegisterRequest) {
+    return this.http.post<void>(`${this.apiUrl}/register`, request);
   }
 
   getAccessToken(): string | null {
