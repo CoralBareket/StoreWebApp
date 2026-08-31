@@ -18,7 +18,14 @@
 
       <div>
         <label for="category" class="block">Category</label>
-        <input id="category" type="text" formControlName="category" class="rounded border p-2" />
+
+        <select id="category" formControlName="category" class="rounded border p-2">
+          @for (category of productCategories; track category) {
+            <option [value]="category">
+              {{ category }}
+            </option>
+          }
+        </select>
       </div>
 
       <div>

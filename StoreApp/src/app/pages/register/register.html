@@ -1,0 +1,61 @@
+<section class="flex min-h-screen items-center justify-center p-8">
+  <div class="w-full max-w-md rounded border p-6">
+    <h1 class="mb-6 text-2xl font-bold">Create Account</h1>
+
+    <form
+      [formGroup]="registerForm"
+      (ngSubmit)="onSubmit()"
+      class="space-y-4"
+    >
+      <div>
+        <label for="userName" class="mb-1 block">Username</label>
+
+        <input
+          id="userName"
+          type="text"
+          formControlName="userName"
+          class="w-full rounded border p-2"
+        />
+      </div>
+
+      <div>
+        <label for="password" class="mb-1 block">Password</label>
+
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          class="w-full rounded border p-2"
+        />
+
+        @if (
+          registerForm.controls.password.touched &&
+          registerForm.controls.password.hasError('minlength')
+        ) {
+          <p class="mt-1 text-sm text-red-600">
+            Password must be at least 6 characters.
+          </p>
+        }
+      </div>
+
+      @if (errorMessage()) {
+        <p class="text-red-600">
+          {{ errorMessage() }}
+        </p>
+      }
+
+      <button
+        type="submit"
+        [disabled]="registerForm.invalid || isSubmitting()"
+        class="w-full rounded border p-2"
+      >
+        {{ isSubmitting() ? 'Creating account...' : 'Register' }}
+      </button>
+    </form>
+
+    <p class="mt-4 text-center">
+      Already have an account?
+      <a routerLink="/login" class="underline">Login</a>
+    </p>
+  </div>
+</section>
