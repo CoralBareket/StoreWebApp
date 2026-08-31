@@ -6,6 +6,7 @@ MS SQL database and JWT authentication.
 
 ## Project Structure
 
+```text
 StoreWebApp/
 ├── StoreApp/                  # Angular client
 ├── StoreWebApi/               # ASP.NET Core Web API
